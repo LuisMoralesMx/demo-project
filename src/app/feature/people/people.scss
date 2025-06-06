@@ -1,0 +1,42 @@
+.people-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .header {
+    font-size: large;
+    font-weight: bold;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    width: 300px;
+  }
+
+  .label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .input-field {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .table-container {
+    padding-top: 25px;
+
+    .column-header {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .column-body {
+      padding: 10px;
+    }
+  }
+}

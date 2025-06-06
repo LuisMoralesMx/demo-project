@@ -1,0 +1,28 @@
+.header-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100px;
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  nav ul li {
+    margin: 0 1rem;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  nav ul li a.active {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}
