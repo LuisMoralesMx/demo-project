@@ -28,16 +28,24 @@ export class People implements OnInit {
       this.sortColumn$,
       this.sortDirection$,
     ]).pipe(
-      map(([people, keyword, sortColumn, sortDirection]) => {
-        const filtered = people.filter((person) =>
-          Object.values(person).some((val: string) =>
-            val.toLowerCase().includes(keyword.toLowerCase()),
-          ),
-        );
+      map(([people, search, sortColumn, sortDirection]) => {
+        const filtered = people.filter((person) => {
+          const searchable = [
+            person.firstName,
+            person.lastName,
+            person.dateOfBirth,
+            person.title,
+            person.phoneNumber,
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          return searchable.includes(search);
+        });
 
         filtered.sort((a, b) => {
-          const aVal = a[sortColumn].toLowerCase();
-          const bVal = b[sortColumn].toLowerCase();
+          const aVal = String(a[sortColumn]).toLowerCase();
+          const bVal = String(b[sortColumn]).toLowerCase();
 
           if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
           if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
