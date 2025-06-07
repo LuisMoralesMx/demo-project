@@ -19,6 +19,8 @@ export class People implements OnInit {
 
   filteredPeople$!: Observable<PeopleModel[]>;
 
+  checkedList = new Set();
+
   private peopleService = inject(PeopleService);
 
   ngOnInit(): void {
@@ -70,5 +72,30 @@ export class People implements OnInit {
       this.sortColumn$.next(column);
       this.sortDirection$.next('asc');
     }
+  }
+
+  handleChecked(id: number) {
+    if (this.checkedList.has(id)) {
+      this.checkedList.delete(id);
+    } else {
+      this.checkedList.add(id);
+    }
+  }
+
+  handleAllChecked(peopleList: PeopleModel[], checked: boolean): void {
+    if (checked) {
+      peopleList.forEach((p) => this.checkedList.add(p.id));
+    } else {
+      peopleList.forEach((p) => this.checkedList.delete(p.id));
+    }
+  }
+
+  handleAreAllSelected(peopleList: PeopleModel[]): boolean {
+    return peopleList.every((p) => this.checkedList.has(p.id));
+  }
+
+  submit(peopleList: PeopleModel[]): void {
+    const result = peopleList.filter((p) => this.checkedList.has(p.id));
+    console.log('Result', result);
   }
 }

@@ -1,31 +1,60 @@
 <div class="people-container">
-    <div class="table-container">
-        <input #searchInput id="search" class="input-field" type="text" placeholder="Search..."
-            (input)="handleOnSearchChange(searchInput.value)">
+  <div class="table-container">
+    <input
+      #searchInput
+      id="search"
+      class="input-field"
+      type="text"
+      placeholder="Search..."
+      (input)="handleOnSearchChange(searchInput.value)"
+    />
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
-                        <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
-                        <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
-                        <th class="column-header" (click)="handleOnSort('title')">Title</th>
-                        <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(people of filteredPeople$ | async; track $index) {
-                    <tr>
-                        <td class="column-body">{{people.firstName}}</td>
-                        <td class="column-body">{{people.lastName}}</td>
-                        <td class="column-body">{{people.dateOfBirth}}</td>
-                        <td class="column-body">{{people.title}}</td>
-                        <td class="column-body">{{people.phoneNumber}}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <ng-container *ngIf="filteredPeople$ | async as peopleList">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="column-header">
+                <input
+                  #checkAll
+                  type="checkbox"
+                  [checked]="handleAreAllSelected(peopleList)"
+                  (change)="handleAllChecked(peopleList, checkAll.checked)"
+                />
+              </th>
+              <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
+              <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
+              <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
+              <th class="column-header" (click)="handleOnSort('title')">Title</th>
+              <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(people of peopleList; track $index) {
+            <tr>
+              <td class="column-body">
+                <input
+                  id="check"
+                  type="checkbox"
+                  [checked]="checkedList.has(people.id)"
+                  (change)="handleChecked(people.id)"
+                />
+              </td>
+              <td class="column-body">{{people.firstName}}</td>
+              <td class="column-body">{{people.lastName}}</td>
+              <td class="column-body">{{people.dateOfBirth}}</td>
+              <td class="column-body">{{people.title}}</td>
+              <td class="column-body">{{people.phoneNumber}}</td>
+            </tr>
+            }
+            <tr>
+              <td colspan="6">
+                <input type="button" value="Submit" (click)="submit(peopleList)" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
 </div>
