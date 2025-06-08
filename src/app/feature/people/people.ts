@@ -74,24 +74,26 @@ export class People implements OnInit {
     }
   }
 
-  handleChecked(id: number) {
-    if (this.checkedList.has(id)) {
-      this.checkedList.delete(id);
-    } else {
-      this.checkedList.add(id);
-    }
+  handleChecked(id: number): void {
+    this.checkedList.has(id) ? this.checkedList.delete(id) : this.checkedList.add(id);
   }
 
-  handleAllChecked(peopleList: PeopleModel[], checked: boolean): void {
-    if (checked) {
-      peopleList.forEach((p) => this.checkedList.add(p.id));
-    } else {
-      peopleList.forEach((p) => this.checkedList.delete(p.id));
-    }
+  handleAllChecked(peopleList: PeopleModel[], checked: boolean) {
+    checked
+      ? peopleList.forEach((p) => this.checkedList.add(p.id))
+      : peopleList.forEach((p) => this.checkedList.delete(p.id));
   }
 
   handleAreAllSelected(peopleList: PeopleModel[]): boolean {
     return peopleList.every((p) => this.checkedList.has(p.id));
+  }
+
+  handleIconSort(sortColumn: string, column: string, sortDirection: string) {
+    let direction = '';
+    if (sortColumn === column) {
+      direction = sortDirection === 'asc' ? '↑' : '↓';
+    }
+    return direction;
   }
 
   submit(peopleList: PeopleModel[]): void {

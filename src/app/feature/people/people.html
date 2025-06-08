@@ -22,7 +22,9 @@
                   (change)="handleAllChecked(peopleList, checkAll.checked)"
                 />
               </th>
-              <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
+              <th class="column-header" (click)="handleOnSort('firstName')">
+                {{handleIconSort(sortColumn$.value, 'firstName', sortDirection$.value) }} First Name
+              </th>
               <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
               <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
               <th class="column-header" (click)="handleOnSort('title')">Title</th>
