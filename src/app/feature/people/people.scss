@@ -38,5 +38,28 @@
     .column-body {
       padding: 10px;
     }
+
+    .scrollbar-container {
+      max-height: 500px;
+      overflow-y: auto;
+
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: white;
+      }
+    }
+
+    .actions {
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .pagination {
+      display: inline-block;
+      padding: 5px;
+      cursor: pointer;
+    }
   }
 }

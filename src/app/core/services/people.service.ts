@@ -14,4 +14,9 @@ export class PeopleService {
   getPeople(): Observable<PeopleModel[]> {
     return of(this.people).pipe(delay(100));
   }
+
+  getTitlesOptions(): Observable<string[]> {
+    const titles = new Set(this.people.map((p) => p.title));
+    return of([...titles]);
+  }
 }
