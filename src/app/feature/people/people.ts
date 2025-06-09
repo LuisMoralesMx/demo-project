@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { PeopleModel } from '../../shared/models/people.model';
 import { CommonModule } from '@angular/common';
 import { PeopleService } from '../../core/services/people.service';
-import { SortDirection } from '../../shared/models/sort.model';
+import { SortDirection, SortKey } from '../../shared/models/sort.model';
 
 @Component({
   selector: 'app-people',
@@ -15,7 +15,8 @@ import { SortDirection } from '../../shared/models/sort.model';
 export class People implements OnInit {
   searchInput$ = new BehaviorSubject<string>('');
   sortColumn$ = new BehaviorSubject<keyof PeopleModel>('firstName');
-  sortDirection$ = new BehaviorSubject<SortDirection>('asc');
+
+  multiSort$ = new BehaviorSubject<SortKey[]>([]);
 
   filteredPeople$!: Observable<PeopleModel[]>;
 
@@ -25,10 +26,9 @@ export class People implements OnInit {
     this.filteredPeople$ = combineLatest([
       this.peopleService.getPeople(),
       this.searchInput$,
-      this.sortColumn$,
-      this.sortDirection$,
+      this.multiSort$,
     ]).pipe(
-      map(([people, search, sortColumn, sortDirection]) => {
+      map(([people, search, multiSort]) => {
         const filtered = people.filter((person) => {
           const searchable = [
             person.firstName,
@@ -44,12 +44,13 @@ export class People implements OnInit {
         });
 
         filtered.sort((a, b) => {
-          const aVal = String(a[sortColumn]).toLowerCase();
-          const bVal = String(b[sortColumn]).toLowerCase();
+          for (const { column, direction } of multiSort) {
+            const aVal = String(a[column]).toLowerCase();
+            const bVal = String(b[column]).toLowerCase();
 
-          if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-          if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-
+            if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+          }
           return 0;
         });
 
@@ -63,12 +64,19 @@ export class People implements OnInit {
   }
 
   handleOnSort(column: keyof PeopleModel) {
-    if (column === this.sortColumn$.value) {
-      const direction = this.sortDirection$.value === 'asc' ? 'desc' : 'asc';
-      this.sortDirection$.next(direction);
-    } else {
-      this.sortColumn$.next(column);
-      this.sortDirection$.next('asc');
+    const current = this.multiSort$.value;
+    const existing = current.find((s) => s.column === column);
+    let newDirection: SortDirection = 'asc';
+
+    if (existing) {
+      newDirection = existing.direction === 'asc' ? 'desc' : 'asc';
     }
+
+    const newSort: SortKey[] = [
+      { column, direction: newDirection },
+      ...current.filter((s) => s.column !== column),
+    ];
+
+    this.multiSort$.next(newSort);
   }
 }
