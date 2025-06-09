@@ -40,16 +40,16 @@ export class People implements OnInit {
             .join(' ')
             .toLowerCase();
 
-          return searchable.includes(search);
+          return searchable.includes(search.toLowerCase());
         });
 
         filtered.sort((a, b) => {
-          for (const { column, direction } of multiSort) {
-            const aVal = String(a[column]).toLowerCase();
-            const bVal = String(b[column]).toLowerCase();
+          for (const sort of multiSort) {
+            const aVal = String(a[sort.column]).toLowerCase();
+            const bVal = String(b[sort.column]).toLowerCase();
 
-            if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-            if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+            if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
           }
           return 0;
         });
