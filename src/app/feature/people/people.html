@@ -1,31 +1,73 @@
 <div class="people-container">
-    <div class="table-container">
-        <input #searchInput id="search" class="input-field" type="text" placeholder="Search..."
-            (input)="handleOnSearchChange(searchInput.value)">
-
+    <ng-container *ngIf="filteredPeople$ | async as peopleList;">
         <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
-                        <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
-                        <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
-                        <th class="column-header" (click)="handleOnSort('title')">Title</th>
-                        <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(people of filteredPeople$ | async; track $index) {
-                    <tr>
-                        <td class="column-body">{{people.firstName}}</td>
-                        <td class="column-body">{{people.lastName}}</td>
-                        <td class="column-body">{{people.dateOfBirth}}</td>
-                        <td class="column-body">{{people.title}}</td>
-                        <td class="column-body">{{people.phoneNumber}}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+            <input #searchInput id="search" class="input-field" type="text" placeholder="Search..."
+                (input)="handleOnSearchChange(searchInput.value)">
+
+            <div class="table-container">
+                <div class="scroll-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="column-header"><input #checkAllInput type="checkbox"
+                                        (click)="handleAllChecked(peopleList, checkAllInput.checked)"
+                                        [checked]="handleAreAllChecked(peopleList)" /></th>
+                                <th class="column-header" (click)="handleOnSort('firstName')">
+                                    <span>{{handleOnSortIcon('firstName')}}</span>
+                                    <span>First Name</span>
+                                </th>
+                                <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
+                                <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
+                                <th class="column-header">
+                                    <span (click)="handleOnSort('title')">Title</span>
+                                    <span>
+                                        <select>
+                                            <option (click)="handleOnTitleFilter('all')">All</option>
+                                            <ng-container *ngFor="let title of titleList$ | async">
+                                                <option (click)="handleOnTitleFilter(title)">{{title}}
+                                                </option>
+                                            </ng-container>
+                                        </select>
+                                    </span>
+                                </th>
+                                <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
+                                <th class="column-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(people of peopleList; track $index) {
+                            <tr>
+                                <td class="column-body"><input type="checkbox"
+                                        [checked]="checkedPeopleList.has(people.id)"
+                                        (click)="handleChecked(people.id)" /></td>
+                                <td class="column-body">{{people.firstName}}</td>
+                                <td class="column-body">{{people.lastName}}</td>
+                                <td class="column-body">{{people.dateOfBirth}}</td>
+                                <td class="column-body">{{people.title}}</td>
+                                <td class="column-body">
+                                    @if(editFieldById === people.id) {
+                                    <input type="text" class="input-field" [(ngModel)]="people.phoneNumber" />
+                                    } @else {
+                                    {{people.phoneNumber}}
+                                    }
+                                </td>
+                                <td class="column-body">
+                                    <input type="button" value="Edit" (click)="handleOnEdit(people.id)" />
+                                    <input type="button" value="Cancel" (click)="handleOnEditCancel()" />
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <div style="display: flex; flex-direction: column;">
+                        <span (click)="handlePrevPage()">Prev</span>
+                        <span (click)="handleNextPage()">Next</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </ng-container>
+
 </div>
