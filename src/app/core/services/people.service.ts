@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PeopleModel } from '../../shared/models/people.model';
-import { delay, Observable, of } from 'rxjs';
+import { BehaviorSubject, delay, map, Observable } from 'rxjs';
 import { peopleList } from './people.mock';
 
 @Injectable({
@@ -9,9 +9,10 @@ import { peopleList } from './people.mock';
 export class PeopleService {
   constructor() {}
 
-  people = peopleList;
+  private peopleSubject = new BehaviorSubject<PeopleModel[]>(peopleList);
+  people$ = this.peopleSubject.asObservable();
 
   getPeople(): Observable<PeopleModel[]> {
-    return of(this.people).pipe(delay(100));
+    return this.people$.pipe(delay(100));
   }
 }
