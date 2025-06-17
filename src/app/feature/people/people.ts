@@ -15,21 +15,24 @@ import { SortDirection, SortKey } from '../../shared/models/sort.model';
 export class People implements OnInit {
   searchInput$ = new BehaviorSubject<string>('');
   sortColumn$ = new BehaviorSubject<keyof PeopleModel>('firstName');
-
   multiSort$ = new BehaviorSubject<SortKey[]>([]);
 
   filteredPeople$!: Observable<PeopleModel[]>;
 
   private peopleService = inject(PeopleService);
 
+  // Toggle Age
+  ageToggle$ = new BehaviorSubject(false);
+
   ngOnInit(): void {
     this.filteredPeople$ = combineLatest([
       this.peopleService.getPeople(),
       this.searchInput$,
       this.multiSort$,
+      this.ageToggle$,
     ]).pipe(
-      map(([people, search, multiSort]) => {
-        const filtered = people.filter((person) => {
+      map(([people, search, multiSort, ageToggle]) => {
+        let filtered = people.filter((person) => {
           const searchable = [
             person.firstName,
             person.lastName,
@@ -42,6 +45,17 @@ export class People implements OnInit {
 
           return searchable.includes(search.toLowerCase());
         });
+
+        // Filter By Age
+        filtered = ageToggle
+          ? filtered.filter((person) => {
+              const age = new Date(person.dateOfBirth).getFullYear();
+              const current = new Date().getFullYear();
+              const actual = current - age;
+
+              return actual < 30 ? true : false;
+            })
+          : filtered;
 
         filtered.sort((a, b) => {
           for (const sort of multiSort) {
@@ -78,5 +92,25 @@ export class People implements OnInit {
     ];
 
     this.multiSort$.next(newSort);
+  }
+
+  handleAgeToggle(check: boolean) {
+    this.ageToggle$.next(check);
+  }
+
+  handleDownloadJSON(jsonData: PeopleModel[], fileName: string): void {
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }

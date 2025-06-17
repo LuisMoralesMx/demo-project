@@ -1,31 +1,47 @@
 <div class="people-container">
+  <ng-container *ngIf="filteredPeople$ | async as filteredPeople">
     <div class="table-container">
-        <input #searchInput id="search" class="input-field" type="text" placeholder="Search..."
-            (input)="handleOnSearchChange(searchInput.value)">
+      <div>
+        <input
+          #searchInput
+          id="search"
+          class="input-field"
+          type="text"
+          placeholder="Search..."
+          (input)="handleOnSearchChange(searchInput.value)"
+        />
+        <input #ageToggleInput type="checkbox" (click)="handleAgeToggle(ageToggleInput.checked)" />
+        <input
+          type="button"
+          value="Export Table"
+          (click)="handleDownloadJSON(filteredPeople, 'test')"
+        />
+      </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
-                        <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
-                        <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
-                        <th class="column-header" (click)="handleOnSort('title')">Title</th>
-                        <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(people of filteredPeople$ | async; track $index) {
-                    <tr>
-                        <td class="column-body">{{people.firstName}}</td>
-                        <td class="column-body">{{people.lastName}}</td>
-                        <td class="column-body">{{people.dateOfBirth}}</td>
-                        <td class="column-body">{{people.title}}</td>
-                        <td class="column-body">{{people.phoneNumber}}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="column-header" (click)="handleOnSort('firstName')">First Name</th>
+              <th class="column-header" (click)="handleOnSort('lastName')">Last Name</th>
+              <th class="column-header" (click)="handleOnSort('dateOfBirth')">Date of Birth</th>
+              <th class="column-header" (click)="handleOnSort('title')">Title</th>
+              <th class="column-header" (click)="handleOnSort('phoneNumber')">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(people of filteredPeople; track $index) {
+            <tr>
+              <td class="column-body">{{people.firstName}}</td>
+              <td class="column-body">{{people.lastName}}</td>
+              <td class="column-body">{{people.dateOfBirth}}</td>
+              <td class="column-body">{{people.title}}</td>
+              <td class="column-body">{{people.phoneNumber}}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
+  </ng-container>
 </div>
